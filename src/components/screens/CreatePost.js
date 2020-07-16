@@ -1,10 +1,42 @@
-import React,{useState} from 'react'
-
+import React,{useState,useEffect} from 'react'
+import {Link, useHistory} from 'react-router-dom';
+import M from 'materialize-css'
 
 const CreatePost = ()=>{
+    const history = useHistory()
     const [title,setTitle] = useState("")
     const [body,setBody] = useState("")
     const [image,setImage] = useState("")
+    const [url,setUrl] = useState("")
+    useEffect(()=>{
+        if (url) {
+        fetch("/createpost", {
+            method:"post",
+            headers:{
+                "Content-Type":"application/json",
+                "Authorization":"Bearer "+localStorage.getItem("jwt")
+            },
+            body:JSON.stringify({
+                title,
+                body,
+                pic:url
+            })
+        }).then(res=>res.json())
+        .then(data=>{
+            
+            if (data.error) {
+                M.toast({html: data.error, classes:"#b71c1c red darken-4"})
+            }
+            else {
+                M.toast({html: "Created post successfully", classes:"#43a047 green darken-1"})
+                history.push('/')
+            }
+
+        }).catch(err=>{
+            console.log(err)
+        })
+    }
+    },[url])
 
     const postDetails = ()=>{
         const data = new FormData()
@@ -18,10 +50,12 @@ const CreatePost = ()=>{
         .then(res=>res.json())
         .then(data=>{
             console.log(data)
+            setUrl(data.url)
         })
         .catch(err=>{
             console.log(err)
         })
+        
     }
     
     return(

@@ -23,6 +23,8 @@ const Signin =()=>{
                 M.toast({html: data.error, classes:"#b71c1c red darken-4"})
             }
             else {
+                localStorage.setItem("jwt",data.token)
+                localStorage.setItem("user",JSON.stringify(data.user))
                 M.toast({html: "Signed in success", classes:"#43a047 green darken-1"})
                 history.push('/')
             }
